@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>{% block title %} SIGNUP {% endblock %}</h1>
+    {% for u in users %}
+        <div class='users'>
+            <p>{{ u['created'] }}</p>
+            <h2>{{ u['FName'] }}</h2>
+            <h2>{{ u['LName'] }}</h2>
+            <h2>{{ u['DOB'] }}</h2>
+        </div>
+    {% endfor %}
+{% endblock %}

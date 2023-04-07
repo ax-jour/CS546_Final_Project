@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>{% block title %} VOTE RESULT {% endblock %}</h1>
+    <hr>
+    <div class='vote'>
+        <h2>{{ vote['vote_title']}}</h2>
+        <h4>{{ vote['op1'] }}</h4>
+        <h5>{{ vote['op1_ct'] }}</h5>
+        <h4>{{ vote['op2'] }}</h4>
+        <h5>{{ vote['op2_ct'] }}</h5>
+    </div>
+{% endblock %}

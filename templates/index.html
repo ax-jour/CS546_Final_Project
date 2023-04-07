@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>{% block title %} HOME {% endblock %}</h1>
+    {% for v in votes %}
+        <div class='votes'>
+        <hr>
+            <p><span style="font-weight: bold;">{{ v['vote_title'] }}</span>
+                <a href="{{ url_for('vote_page', vote_id=v['vote_id'])}}">Vote</a>
+                <span> | </span>
+                <a href="{{ url_for('vote_result_page', vote_id=v['vote_id'])}}">Result</a>
+            </p>
+        {% if not v['vote_isComplete'] %}
+            <p>Status: Incomplete</p>
+        {% else %}
+            <p>Status: Complete</p>
+        {% endif %}
+        </div>
+    {% endfor %}
+{% endblock %}

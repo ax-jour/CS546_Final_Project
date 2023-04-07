@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>{% block title %} VOTE {% endblock %}</h1>
+    <hr>
+    <div class='vote'>
+        <h2 id="vote_title" data-voteid="{{ vote['vote_id'] }}">{{ vote['vote_title'] }}</h2>
+        <br>
+        <form>
+            <input type="radio" name="option" value="op1"> {{ vote['op1'] }}<br>
+            <input type="radio" name="option" value="op2"> {{ vote['op2'] }}<br>
+            <br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    <script>
+        document.querySelector('form').addEventListener('submit', async (e) => {
+            e.preventDefault()
+            const formData = new FormData(e.target)
+            const vote_choice = formData.get('option')
+            const response = await fetch('/vote', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'vote_id': document.getElementById('vote_title').dataset.voteid,
+                    'user_id': 'user_account1',
+                    'proof': 0,
+                    'hashed_secret': 0,
+                    'vote_choice': vote_choice
+                })
+            })
+            const data = await response.json()
+            if (response.status === 200) {
+                alert(`Vote submission success!`)
+            } else {
+                alert(`Vote submission failed! Reason: ${data.message}`)
+            }
+        })
+    </script>
+{% endblock %}
