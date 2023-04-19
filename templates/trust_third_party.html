@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>Trust Third Authority</title>
+    <link rel="shortcut icon" href="/assets/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/main.css') }}">
+</head>
+<body>
+<div class="container">
+    <form class="form" id="login" method="post" action="voting.html">
+        <h1 class="form__title">Trust Third Authority Verification</h1>
+        <div class="form__message form__message--error"></div>
+        <div class="form__input-group">
+            <input type="text" class="form__input" autofocus placeholder="First Name">
+            <div class="form__input-error-message"></div>
+        </div>
+        <div class="form__input-group">
+            <input type="text" class="form__input" autofocus placeholder="Last Name">
+            <div class="form__input-error-message"></div>
+        </div>
+        <div class="form__input-group">
+            <input type="text" class="form__input" autofocus placeholder="Driver Licence #">
+            <div class="form__input-error-message"></div>
+        </div>
+        <button class="form__button" type="submit">Get Invitation Code</button>
+    </form>
+</div>
+<script src="{{ url_for('static',filename='js/main.js') }}"></script>
+</body>

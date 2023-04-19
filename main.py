@@ -74,6 +74,14 @@ def index_page():
     conn.close()
     return render_template('index.html', votes=votes)
 
+# Trust Third Party
+@app.route("/third_party")
+def third_party_page():
+    conn = get_db_connection()
+    votes = conn.execute('SELECT * FROM votes').fetchall()
+    conn.close()
+    return render_template('trust_third_party.html', votes=votes)
+
 
 # Signup Page
 @app.route("/signup_page")
@@ -93,7 +101,7 @@ def vote_page(vote_id):
     conn = get_db_connection()
     vote = conn.execute('SELECT * FROM votes WHERE vote_id = ?', (vote_id)).fetchone()
     conn.close()
-    return render_template('vote.html', vote=vote)
+    return render_template('voting.html', vote=vote)
 
 
 # Vote Result Page
@@ -102,7 +110,7 @@ def vote_result_page(vote_id):
     conn = get_db_connection()
     vote = conn.execute('SELECT * FROM votes WHERE vote_id = ?', (vote_id)).fetchone()
     conn.close()
-    return render_template('vote_result.html', vote=vote)
+    return render_template('results.html', vote=vote)
 
 
 # Signup Request API endpoint
