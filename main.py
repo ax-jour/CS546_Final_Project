@@ -1,7 +1,7 @@
 import sqlite3
 from flask import Flask, render_template, jsonify, request, make_response, url_for, redirect
 from flask_cors import CORS, cross_origin
-import json
+import random
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -211,6 +211,26 @@ def vote():
         conn.close()
 
         response = make_response({'message':'Success'}, 200)
+        return response
+    else:
+        response = make_response({'message':'Error'}, 400)
+        return response
+    
+
+# Get third party's verification code
+# Intput: user's first_name, last_name, and Driver's License
+# Output: verification code
+@app.route("/get_verification_code", methods=['GET', 'POST'])
+@cross_origin()
+def get_verification_code():
+    if request.method == 'POST':
+        data = request.get_json()
+        print(data)
+        first_name = data['first_name']
+        last_name = data['last_name']
+        driver_license = data['driver_license']
+        verification_code = random.randint(0, 100000)
+        response = make_response({'message':str(verification_code)}, 200)
         return response
     else:
         response = make_response({'message':'Error'}, 400)
