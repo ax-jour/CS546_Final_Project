@@ -33,7 +33,7 @@ def index():
 
 
 # Trust Third Party
-@app.route("/third_party_page")
+@app.route("/third_party")
 def third_party_page():
     return render_template('trust_third_party.html')
 

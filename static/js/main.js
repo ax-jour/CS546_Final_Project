@@ -158,22 +158,25 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .catch(err => {
                 err.json()
-                .then(() => { 
-                    fetch('http://localhost:5000/logout', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                    }).then((response) => {
-                        if (response.ok) { return response.json() }
-                        return Promise.reject(response);
-                    })
-                    .then(() => {
-                        window.location.replace("http://localhost:5000/");
-                    })
-                    .catch(err => {
-                        err.json()
-                        .then(data => { setFormMessage(challengeForm, "error", data.message) });
-                    });
+                .then(err => {
+                    setFormMessage(challengeForm, "error", err.message)
                 });
+                // .then(() => { 
+                //     fetch('http://localhost:5000/logout', {
+                //         method: 'POST',
+                //         headers: { 'Content-Type': 'application/json' },
+                //     }).then((response) => {
+                //         if (response.ok) { return response.json() }
+                //         return Promise.reject(response);
+                //     })
+                //     .then(() => {
+                //         window.location.replace("http://localhost:5000/");
+                //     })
+                //     .catch(err => {
+                //         err.json()
+                //         .then(data => { setFormMessage(challengeForm, "error", data.message) });
+                //     });
+                // });
             });
 
         });
