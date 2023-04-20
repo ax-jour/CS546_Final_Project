@@ -3,6 +3,7 @@ body {
     --color-primary-dark: #007f67;
     --color-secondary: #252c6a;
     --color-error: #cc3333;
+    --color-error-dark: #661a1a;
     --color-success: #4bb544;
     --border-radius: 4px;
 
@@ -106,8 +107,17 @@ body {
     background: var(--color-primary);
 }
 
+.form__button.error {
+    margin-top: 1rem;
+    background: var(--color-error);
+}
+
 .form__button:hover {
     background: var(--color-primary-dark);
+}
+
+.form__button.error:hover {
+    background: var(--color-error-dark);
 }
 
 .form__button:active {

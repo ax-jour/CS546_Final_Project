@@ -8,8 +8,8 @@
 </head>
 <body>
 <div class="container">
-    <form class="form" id="thirdparty" method="post">
-        <h1 class="form__title">Trust Third Authority Verification</h1>
+    <form class="form" id="challenge" method="post">
+        <h1 class="form__title">Challenge Page</h1>
         <div class="form__input-group">
             <input type="text" class="form__input" id="first" autofocus placeholder="First Name">
             <div class="form__input-error-message"></div>
@@ -18,12 +18,9 @@
             <input type="text" class="form__input" id="last" autofocus placeholder="Last Name">
             <div class="form__input-error-message"></div>
         </div>
-        <div class="form__input-group">
-            <input type="text" class="form__input" id="license" autofocus placeholder="Driver License">
-            <div class="form__input-error-message"></div>
-        </div>
         <div class="form__message form__message--error"></div>
-        <button class="form__button" type="submit" style="margin-top:1rem;">Get Invitation Code</button>
+        <button class="form__button" type="submit" style="margin-top:1rem;">Prove</button>
+        <button class="form__button error" id="logout">Logout</button>
     </form>
 </div>
 <script src="{{ url_for('static',filename='js/main.js') }}"></script>

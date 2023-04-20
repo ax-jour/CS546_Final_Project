@@ -27,25 +27,24 @@ function clearInputError(inputElement) {
 document.addEventListener("DOMContentLoaded", () => {
     const thirdpartyForm = document.querySelector("#thirdparty");
     const loginForm = document.querySelector("#login");
+    const challengeForm = document.querySelector("#challenge");
     const createAccountForm = document.querySelector("#createAccount");
     const linkCreateAccount = document.querySelector("#linkCreateAccount");
     const linkLogin = document.querySelector("#linkLogin");
 
-    /**
-     * Switch from login page to signup page
-     */
-    if (linkCreateAccount) {
+    if (linkCreateAccount || linkLogin) {
+        /**
+         * Switch from login page to signup page
+         */
         linkCreateAccount.addEventListener("click", e => {
             e.preventDefault();
             loginForm.classList.add("form--hidden");
             createAccountForm.classList.remove("form--hidden");
         });
-    }
 
-    /**
-     * Switch from signup page to login page
-     */
-    if (linkLogin) {
+        /**
+         * Switch from signup page to login page
+         */
         linkLogin.addEventListener("click", e => {
             e.preventDefault();
             loginForm.classList.remove("form--hidden");
@@ -61,8 +60,8 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             const first_name = thirdpartyForm.querySelector("#first").value;
             const last_name = thirdpartyForm.querySelector("#last").value;
-            const driver_license = thirdpartyForm.querySelector("#driver").value;
-            fetch('http://localhost:5000/get_verification_code', {
+            const driver_license = thirdpartyForm.querySelector("#license").value;
+            fetch('http://localhost:5000/get_invitation_code', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ first_name, last_name, driver_license })
@@ -89,9 +88,94 @@ document.addEventListener("DOMContentLoaded", () => {
     if (loginForm) {
         loginForm.addEventListener("submit", e => {
             e.preventDefault();
-            // perform login
+            const invitation_code = loginForm.querySelector("#login_invitation").value;
+            fetch('http://localhost:5000/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ invitation_code })
+            })
+            .then(response => {
+                if (response.ok) { return response.json() }
+                return Promise.reject(response);
+            })
+            .then(responseJson => {
+                window.location.replace("http://localhost:5000/challenge_page");
+            })
+            .catch(err => {
+                err.json()
+                .then(data => { setFormMessage(loginForm, "error", data.message) });
+            });
+        });
+    }
+    
 
-            setFormMessage(loginForm, "error", "Invalid username/password");
+    if (createAccountForm) {
+        createAccountForm.addEventListener("submit", e => {
+            e.preventDefault();
+            const first_name = createAccountForm.querySelector("#first").value;
+            const last_name = createAccountForm.querySelector("#last").value;
+            const invitation = createAccountForm.querySelector("#signup_invitation").value;
+            fetch('http://localhost:5000/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ first_name, last_name, invitation })
+            })
+            .then(response => {
+                if (response.ok) { return response.json() }
+                return Promise.reject(response);
+            })
+            .then(responseJson => {
+                window.location.replace("http://localhost:5000/challenge_page");
+            })
+            .catch(err => {
+                err.json()
+                .then(data => { setFormMessage(createAccountForm, "error", data.message) });
+            });
+        });
+    }
+
+
+    if (challengeForm) {
+        challengeForm.addEventListener("submit", e => {
+            e.preventDefault();
+            const first_name = challengeForm.querySelector("#first").value;
+            const last_name = challengeForm.querySelector("#last").value;
+
+            fetch('http://localhost:5000/challenge', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ first_name, last_name })
+            })
+            .then(response => {
+                if (response.ok) { return response.json() }
+                return Promise.reject(response);
+            })
+            .then(responseJson => {
+                setFormMessage(challengeForm, "success", responseJson.message);
+            })
+            .catch(err => {
+                err.json()
+                .then(data => { setFormMessage(challengeForm, "error", data.message) });
+            });
+
+        });
+
+        challengeForm.querySelector("#logout").addEventListener("click", e => {
+            e.preventDefault();
+            fetch('http://localhost:5000/logout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            }).then((response) => {
+                if (response.ok) { return response.json() }
+                return Promise.reject(response);
+            })
+            .then(() => { 
+                window.location.replace("http://localhost:5000/"); 
+            })
+            .catch(err => {
+                err.json()
+                .then(data => { setFormMessage(challengeForm, "error", data.message) });
+            });
         });
     }
 
