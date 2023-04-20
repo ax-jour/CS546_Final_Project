@@ -49,21 +49,25 @@ def challenge_page():
 
 
 # Vote Page
-@app.route("/vote_page/<vote_id>", methods=['GET'])
-def vote_page(vote_id):
-    conn = get_db_connection()
-    vote = conn.execute('SELECT * FROM votes WHERE vote_id = ?', (vote_id)).fetchone()
-    conn.close()
-    return render_template('voting.html', vote=vote)
+@app.route("/vote_page", methods=['GET'])
+def vote_page():
+    invitation_code = request.cookies.get('invitation_code')
+    if invitation_code is None:
+        return redirect(url_for('index'))
+    
+    votes = get_votes(1)
+    return render_template('voting.html', votes=votes)
 
 
 # Vote Result Page
-@app.route("/vote_result/<vote_id>", methods=['GET'])
-def vote_result_page(vote_id):
-    conn = get_db_connection()
-    vote = conn.execute('SELECT * FROM votes WHERE vote_id = ?', (vote_id)).fetchone()
-    conn.close()
-    return render_template('results.html', vote=vote)
+@app.route("/vote_result", methods=['GET'])
+def vote_result_page():
+    invitation_code = request.cookies.get('invitation_code')
+    if invitation_code is None:
+        return redirect(url_for('index'))
+    
+    votes = get_votes(1)
+    return render_template('results.html', votes=votes)
 
 
 
@@ -154,18 +158,17 @@ def logout():
     return response
 
     
-
 # Challenge Request API endpoint
 # Input: random number c
 # Output: selected t and calculated r
 @app.route("/challenge", methods=['POST'])
 @cross_origin()
 def challenge():
-    data = request.get_json()
-
     invitation_code = int(request.cookies.get('invitation_code').replace('"', ''))
     if invitation_code is None:
         return make_response({'message':'Please login first!'}, 400)
+    
+    data = request.get_json()
 
     c = int(request.cookies.get('saved_c'))
     v = int(request.cookies.get('saved_v'))
@@ -196,53 +199,6 @@ def challenge():
         return make_response({'message':'Verification Fail'}, 400)
     
 
-# Voting Request API endpoint
-# Input: vote_id, user_id, proof(Pf), vote, hashed_secret(H)
-# Output: Success or Error
-@app.route("/vote", methods=['POST'])
-@cross_origin()
-def vote():
-    data = request.get_json()
-    vote_id = data['vote_id']
-    user_id = data['user_id']
-    Pf = data['proof']
-    hashed_secret = data['hashed_secret']
-    vote_selection = data['vote_choice']
-
-    conn = get_db_connection()
-    verifier_key = conn.execute('SELECT verifier_key FROM users WHERE user_id = ?', (user_id,)).fetchone()
-    conn.close()
-
-    # TODO: Step 1: Verify proof
-
-    
-    # TODO: Step 2: Check vote is completed or not
-    if isVoteCompleted(vote_id):
-        response = make_response({'message':'Vote closed'}, 400)
-        return response
-
-    # TODO: Step 2: Check duplicate vote in blockchain
-    if isDuplicateVote(user_id, vote_id):
-        response = make_response('Vote duplicated', 400)
-        return response
-
-    # TODO: Step 3: Update vote into blockchain
-
-    # TODO: Step 4: Update vote counter in database
-    conn = get_db_connection()
-    vote = conn.execute('SELECT * FROM votes WHERE vote_id = ?', (vote_id,)).fetchone()
-    vote_dict = row_to_dict(vote)
-
-    vote_ct = vote_dict[vote_selection+"_ct"] + 1
-
-    conn.execute('UPDATE votes SET ' + vote_selection + '_ct' + ' = ? WHERE vote_id = ?', (vote_ct, vote_id))
-    conn.commit()        
-    conn.close()
-
-    response = make_response({'message':'Success'}, 200)
-    return response
-    
-
 # Get third party's verification code
 # Intput: user's first name, and last name
 # Output: invite code
@@ -261,4 +217,34 @@ def get_invitation_code():
     conn.close()
     
     response = make_response({'message':str(invitation_code)}, 200)
+    return response
+    
+
+# Voting Request API endpoint
+# Input: vote_id, user_id, proof(Pf), vote, hashed_secret(H)
+# Output: Success or Error
+@app.route("/vote", methods=['POST'])
+@cross_origin()
+def vote():
+    invitation_code = int(request.cookies.get('invitation_code').replace('"', ''))
+    if invitation_code is None:
+        return make_response({'message':'Please login first!'}, 400)
+    
+    data = request.get_json()
+    candidate = data['candidate']
+    
+    conn = get_db_connection()
+    user = conn.execute('SELECT * FROM votes_participants WHERE participant = ?', (invitation_code,)).fetchone()
+    if user is not None:
+        print('User already voted!')
+        return make_response({'message':'User already voted!'}, 400)
+    
+    vote_ct = conn.execute('SELECT ' + candidate + '_ct FROM votes WHERE vote_id = ?', (1,)).fetchone()
+    vote_ct = int(row_to_dict(vote_ct)[candidate + '_ct']) + 1
+    conn.execute('UPDATE votes SET ' + candidate + '_ct' + ' = ? WHERE vote_id = ?', (vote_ct, 1))
+    conn.execute('INSERT INTO votes_participants (participant,vote_id) VALUES (?,?)',(invitation_code,1))
+    conn.commit()        
+    conn.close()
+
+    response = make_response({'message':'Success'}, 200)
     return response

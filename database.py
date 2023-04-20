@@ -25,3 +25,10 @@ def get_db_connection():
     conn = sqlite3.connect('database.db')
     conn.row_factory = sqlite3.Row
     return conn
+
+
+def get_votes(vote_id):
+    conn = get_db_connection()
+    vote = conn.execute('SELECT * FROM votes WHERE vote_id = ?', (vote_id,)).fetchone()
+    conn.close()
+    return row_to_dict(vote)

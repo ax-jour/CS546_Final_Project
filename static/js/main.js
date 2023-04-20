@@ -31,6 +31,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const createAccountForm = document.querySelector("#createAccount");
     const linkCreateAccount = document.querySelector("#linkCreateAccount");
     const linkLogin = document.querySelector("#linkLogin");
+    const voteResult = document.querySelector("#voteResult");
+    const voting = document.querySelector("#voting");
 
     if (linkCreateAccount || linkLogin) {
         /**
@@ -152,6 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .then(responseJson => {
                 setFormMessage(challengeForm, "success", responseJson.message);
+                window.location.replace("http://localhost:5000/vote_page");
             })
             .catch(err => {
                 err.json()
@@ -193,6 +196,75 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
+
+
+    if (voting) {        
+        voting.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener("click", e => {
+                e.preventDefault();
+                let candidate = btn.getAttribute("id");
+                fetch('http://localhost:5000/vote', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ candidate })
+                })
+                .then(response => {
+                    if (response.ok) { return response.json() }
+                    return Promise.reject(response);
+                })
+                .then(responseJson => {
+                    window.location.replace("http://localhost:5000/vote_result");
+                })
+                .catch(err => {
+                    err.json()
+                    .then(data => { setFormMessage(voting, "error", data.message) });
+                });
+            });
+        });
+
+        document.querySelector("#logout").addEventListener("click", e => {
+            e.preventDefault();
+            fetch('http://localhost:5000/logout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            }).then((response) => {
+                if (response.ok) { return response.json() }
+                return Promise.reject(response);
+            })
+            .then(() => { 
+                window.location.replace("http://localhost:5000/"); 
+            })
+            .catch(err => {
+                err.json()
+                .then(data => { setFormMessage(voting, "error", data.message) });
+            });
+        });
+    }
+
+
+    if (voteResult) {
+        console.log("voteResult");
+
+        document.querySelector("#logout").addEventListener("click", e => {
+            e.preventDefault();
+            fetch('http://localhost:5000/logout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            }).then((response) => {
+                if (response.ok) { return response.json() }
+                return Promise.reject(response);
+            })
+            .then(() => { 
+                window.location.replace("http://localhost:5000/"); 
+            })
+            .catch(err => {
+                err.json()
+                .then(data => { setFormMessage(voting, "error", data.message) });
+            });
+        });
+    }
+
+
 
     document.querySelectorAll(".form__input").forEach(inputElement => {
         inputElement.addEventListener("blur", e => {

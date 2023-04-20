@@ -24,14 +24,15 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item"><a class="nav-link" href="voting.html">Return to Voting <i class="fas fa-home"></i></a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('vote_page') }}">Return to Voting <i class="fas fa-home"></i></a></li>
+                    <li id="logout" class="nav-item"><a class="nav-link" href="#">Logout <i class="fas fa-home"></i></a></li>
                 </ul>
             </div>
         </nav>
     </div>
-    <div class="container">
+    <div id="voteResult" class="container">
 
-        <h1 style="text-align: left; padding-bottom:10px;" class="poll-name-res">Poll name</h1>
+        <h1 style="text-align: left; padding-bottom:10px;" class="poll-name-res">{{votes['vote_title']}}</h1>
         <table class="styled-table">
             <thead>
             <tr>
@@ -40,16 +41,16 @@
             </tr>
             </thead>
             <tr>
-                <td><h2 class="cand-v c1-nme">Candidate-1:</h2></td>
-                <td><h3 class="c1-votes">0 votes</h3></td>
+                <td><h2 class="cand-v c1-nme">{{votes['op1']}}</h2></td>
+                <td><h3 class="c1-votes">{{votes['op1_ct']}} votes</h3></td>
             </tr>
             <tr>
-                <td class="active-row"><h2 class="cand-v c2-nme">Candidate-2:</h2></td>
-                <td><h3 class="c2-votes">0 votes</h3></td>
+                <td class="active-row"><h2 class="cand-v c2-nme">{{votes['op2']}}</h2></td>
+                <td><h3 class="c2-votes">{{votes['op2_ct']}} votes</h3></td>
             </tr>
             <tr>
-                <td><h2 class="cand-v c3-nme">Candidate-3:</h2></td>
-                <td><h3 class="c3-votes">0 votes</h3></td>
+                <td><h2 class="cand-v c3-nme">{{votes['op3']}}</h2></td>
+                <td><h3 class="c3-votes">{{votes['op3_ct']}} votes</h3></td>
             </tr>
         </table>
     </div>

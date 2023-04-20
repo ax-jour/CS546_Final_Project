@@ -20,28 +20,31 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item"><a class="nav-link" href="results.html">Poll Results</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('vote_result_page') }}">Poll Results</a></li>
+                    <li id="logout" class="nav-item"><a class="nav-link" href="#">Logout <i class="fas fa-home"></i></a></li>
                 </ul>
             </div>
         </nav>
     </div>
-    <div class="container" >
-    <h2 class="poll-name">Poll name</h2>
-    <div class="row rw1">
-        <div class="col-lg-4">
-            <h2 id="cn-1" class="cn">Candidate1</h2>
-            <button type="button" class="btn btn-1">Vote <i class="fas fa-hand-point-up"></i></button>
+    <div id="voting" class="container" >
+        <h2 class="poll-name">{{ votes['vote_title'] }}</h2>
+        <div class="row rw1">
+            <div class="col-lg-4">
+                <h2 id="cn-1" class="cn">{{votes['op1']}}</h2>
+                <button id="op1" type="button" class="btn btn-1">Vote <i class="fas fa-hand-point-up"></i></button>
+            </div>
+            <div class="col-lg-4">
+                <h2 id="cn-2" class="cn">{{votes['op2']}}</h2>
+                <button id="op2" type="button" class="btn btn-2">Vote <i class="fas fa-hand-point-up"></i></button>
+            </div>
+            <div class="col-lg-4">
+                <h2 id="cn-3" class="cn">{{votes['op3']}}</h2>
+                <button id="op3" type="button" class="btn btn-3">Vote <i class="fas fa-hand-point-up"></i></button>
+            </div>
         </div>
-        <div class="col-lg-4">
-            <h2 id="cn-2" class="cn">Candidate2</h2>
-            <button type="button" class="btn btn-2">Vote <i class="fas fa-hand-point-up"></i></button>
-        </div>
-        <div class="col-lg-4">
-            <h2 id="cn-3" class="cn">Candidate3</h2>
-            <button type="button" class="btn btn-3">Vote <i class="fas fa-hand-point-up"></i></button>
-        </div>
+        <div class="form__message form__message--error"></div>
     </div>
-    </div>
+    
     </div>
 </section>
 
