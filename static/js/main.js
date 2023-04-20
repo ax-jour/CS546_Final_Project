@@ -155,8 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .catch(err => {
                 err.json()
-                .then(data => { 
-                    // setFormMessage(challengeForm, "error", data.message) 
+                .then(() => { 
                     fetch('http://localhost:5000/logout', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
