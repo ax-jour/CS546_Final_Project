@@ -66,7 +66,7 @@ class Blockchain(object):
 
   #mines the block- generates proof
   def mineblock(self, provkey, hsecret, vote):
-    blockchain.setdata(provkey, hsecret, vote)
+    self.setdata(provkey, hsecret, vote)
 
     previous_block = self.print_previous_block()
     previous_proof = previous_block['proof']
