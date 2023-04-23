@@ -1,6 +1,6 @@
 import datetime
 import hashlib
-import json
+import json, database
 
 
 class Blockchain(object):
@@ -19,9 +19,42 @@ class Blockchain(object):
              'previous_hash': previous_hash or self.hash(self.chain[-1]),
              'data': self.data
              }
+    
+    print('self.data', self.data)
+    trip = block['data']
+    print(len(trip))
+    data = trip[0]
+    data0 = data['prover key']
+    data1 = data['hashed secret']
+    data2 = data['vote']
+    # print()
+    # print("empty?", block['data'])
+    # data0 = block['data']['prover key']
+    # data1 = block['data']['hashed secret']
+    # data2 = block['data']['vote']
+    conn = database.get_db_connection()
+    conn.execute("INSERT INTO blockchain (idx, ts, proof, previous_hash, data_pk, data_hs, data_vote) VALUES (?, ?, ?, ?, ?, ?, ?)", \
+                 (block['index'], block['timestamp'], block['proof'], block['previous_hash'], data0, data1, data2))
+    conn.commit()
+    conn.close()
 
     self.data = []
+
+
+    # conn = database.get_db_connection()
+    # blockchain_list = conn.execute("SELECT * FROM blockchain")
+    # conn.commit()
+    # conn.close()
+
+    # bc_ls = database.row_to_dict(blockchain_list)
+    # # [{}, {}, {}]
+
+    # for bc in bc_ls:
+    #     index = bc['idx']
+    #     ts = bc['ts']
+    #     proof = int(bc['proof'])
     
+
     self.chain.append(block)
     return block
   
