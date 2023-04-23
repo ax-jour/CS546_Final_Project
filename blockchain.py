@@ -115,7 +115,6 @@ class Blockchain(object):
     while block_index < len(self.chain):
       block = self.chain[block_index]
       trip = block['data']
-      print(trip)
       data = trip[0]
       
       if data['vote'] == True:

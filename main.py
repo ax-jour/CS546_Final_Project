@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, make_response, url_for, redir
 from flask_cors import CORS, cross_origin
 from database import *
 from vote import *
+from blockchain import *
 import zkp_prover as pr
 import zkp_verifier as ve
 
@@ -10,6 +11,10 @@ app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 init_db() # Initializing Database
+
+
+#TODO store, save, and recover blockchain from previous sessions
+blockchain = Blockchain()
 
 
 '''
@@ -106,7 +111,10 @@ def signup():
     # Update y to user table
     ve.save_y(invitation, encrypted_y)
 
-    return make_response({'message':'Success'}, 200)
+    response = make_response({'message':'Success'}, 200)
+    response.set_cookie('saved_y', json.dumps(encrypted_y))
+
+    return response
     
 
 # Login Request API endpoint
@@ -154,6 +162,7 @@ def logout():
     response.set_cookie('saved_v', '', expires=0)
     response.set_cookie('saved_c', '', expires=0)
     response.set_cookie('saved_t', '', expires=0)
+    response.set_cookie('saved_y', '', expires=0)
     
     return response
 
@@ -229,22 +238,55 @@ def vote():
     invitation_code = int(request.cookies.get('invitation_code').replace('"', ''))
     if invitation_code is None:
         return make_response({'message':'Please login first!'}, 400)
-    
-    data = request.get_json()
-    candidate = data['candidate']
-    
-    conn = get_db_connection()
-    user = conn.execute('SELECT * FROM votes_participants WHERE participant = ?', (invitation_code,)).fetchone()
-    if user is not None:
-        print('User already voted!')
+
+    #fetch prover key and hashed secret
+    pk = int(request.cookies.get('saved_c'))
+    hs = request.cookies.get('saved_y')
+
+    #TODO where do we actually check the verifier? Here? How?
+
+    #check duplicate vote, return error if duplicate
+    if (isDuplicateVote(blockchain, pk, hs)):
         return make_response({'message':'User already voted!'}, 400)
     
-    vote_ct = conn.execute('SELECT ' + candidate + '_ct FROM votes WHERE vote_id = ?', (1,)).fetchone()
-    vote_ct = int(row_to_dict(vote_ct)[candidate + '_ct']) + 1
-    conn.execute('UPDATE votes SET ' + candidate + '_ct' + ' = ? WHERE vote_id = ?', (vote_ct, 1))
-    conn.execute('INSERT INTO votes_participants (participant,vote_id) VALUES (?,?)',(invitation_code,1))
-    conn.commit()        
-    conn.close()
+    #TODO get vote from the data
+    data = request.get_json()
+    candidate = data['candidate']
+
+    if candidate=="op1":
+        v = True
+    else:
+        v = False
+
+    blockchain.mineblock(pk, hs, v)
+    blockchain.printchain()
+
+    #check if chain is valid
+    if (not blockchain.chain_valid()):
+        return make_response({'message':'Chain is not valid!'}, 400)
+    
+    #update vote count
+    #TODO do we actually display this anywhere? need to access this in vote.py?
+    temp = blockchain.countvotes()
+    op1_ct = temp[0]
+    op2_ct = temp[1]
+
+
+#    data = request.get_json()
+#    candidate = data['candidate']
+
+#    conn = get_db_connection()
+#    user = conn.execute('SELECT * FROM votes_participants WHERE participant = ?', (invitation_code,)).fetchone()
+#    if user is not None:
+#        print('User already voted!')
+#        return make_response({'message':'User already voted!'}, 400)
+    
+#    vote_ct = conn.execute('SELECT ' + candidate + '_ct FROM votes WHERE vote_id = ?', (1,)).fetchone()
+#    vote_ct = int(row_to_dict(vote_ct)[candidate + '_ct']) + 1
+#    conn.execute('UPDATE votes SET ' + candidate + '_ct' + ' = ? WHERE vote_id = ?', (vote_ct, 1))
+#    conn.execute('INSERT INTO votes_participants (participant,vote_id) VALUES (?,?)',(invitation_code,1))
+#    conn.commit()        
+#    conn.close()
 
     response = make_response({'message':'Success'}, 200)
     return response

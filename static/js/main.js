@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
-    
+
 
 
     /**
@@ -96,20 +96,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ invitation_code })
             })
-            .then(response => {
-                if (response.ok) { return response.json() }
-                return Promise.reject(response);
-            })
-            .then(responseJson => {
-                window.location.replace("http://localhost:5000/challenge_page");
-            })
-            .catch(err => {
-                err.json()
-                .then(data => { setFormMessage(loginForm, "error", data.message) });
-            });
+                .then(response => {
+                    if (response.ok) { return response.json() }
+                    return Promise.reject(response);
+                })
+                .then(responseJson => {
+                    window.location.replace("http://localhost:5000/challenge_page");
+                })
+                .catch(err => {
+                    err.json()
+                        .then(data => { setFormMessage(loginForm, "error", data.message) });
+                });
         });
     }
-    
+
 
     if (createAccountForm) {
         createAccountForm.addEventListener("submit", e => {
@@ -122,17 +122,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ first_name, last_name, invitation })
             })
-            .then(response => {
-                if (response.ok) { return response.json() }
-                return Promise.reject(response);
-            })
-            .then(responseJson => {
-                window.location.replace("http://localhost:5000/challenge_page");
-            })
-            .catch(err => {
-                err.json()
-                .then(data => { setFormMessage(createAccountForm, "error", data.message) });
-            });
+                .then(response => {
+                    if (response.ok) { return response.json() }
+                    return Promise.reject(response);
+                })
+                .then(responseJson => {
+                    window.location.replace("http://localhost:5000/challenge_page");
+                })
+                .catch(err => {
+                    err.json()
+                        .then(data => { setFormMessage(createAccountForm, "error", data.message) });
+                });
         });
     }
 
@@ -148,36 +148,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ first_name, last_name })
             })
-            .then(response => {
-                if (response.ok) { return response.json() }
-                return Promise.reject(response);
-            })
-            .then(responseJson => {
-                setFormMessage(challengeForm, "success", responseJson.message);
-                window.location.replace("http://localhost:5000/vote_page");
-            })
-            .catch(err => {
-                err.json()
-                .then(err => {
-                    setFormMessage(challengeForm, "error", err.message)
+                .then(response => {
+                    if (response.ok) { return response.json() }
+                    return Promise.reject(response);
+                })
+                .then(responseJson => {
+                    setFormMessage(challengeForm, "success", responseJson.message);
+                    window.location.replace("http://localhost:5000/vote_page");
+                })
+                .catch(err => {
+                    err.json()
+                        .then(err => {
+                            setFormMessage(challengeForm, "error", err.message)
+                        });
+                    // .then(() => { 
+                    //     fetch('http://localhost:5000/logout', {
+                    //         method: 'POST',
+                    //         headers: { 'Content-Type': 'application/json' },
+                    //     }).then((response) => {
+                    //         if (response.ok) { return response.json() }
+                    //         return Promise.reject(response);
+                    //     })
+                    //     .then(() => {
+                    //         window.location.replace("http://localhost:5000/");
+                    //     })
+                    //     .catch(err => {
+                    //         err.json()
+                    //         .then(data => { setFormMessage(challengeForm, "error", data.message) });
+                    //     });
+                    // });
                 });
-                // .then(() => { 
-                //     fetch('http://localhost:5000/logout', {
-                //         method: 'POST',
-                //         headers: { 'Content-Type': 'application/json' },
-                //     }).then((response) => {
-                //         if (response.ok) { return response.json() }
-                //         return Promise.reject(response);
-                //     })
-                //     .then(() => {
-                //         window.location.replace("http://localhost:5000/");
-                //     })
-                //     .catch(err => {
-                //         err.json()
-                //         .then(data => { setFormMessage(challengeForm, "error", data.message) });
-                //     });
-                // });
-            });
 
         });
 
@@ -190,13 +190,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (response.ok) { return response.json() }
                 return Promise.reject(response);
             })
-            .then(() => { 
-                window.location.replace("http://localhost:5000/"); 
-            })
-            .catch(err => {
-                err.json()
-                .then(data => { setFormMessage(challengeForm, "error", data.message) });
-            });
+                .then(() => {
+                    window.location.replace("http://localhost:5000/");
+                })
+                .catch(err => {
+                    err.json()
+                        .then(data => { setFormMessage(challengeForm, "error", data.message) });
+                });
         });
     }
 
@@ -245,36 +245,36 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    if (voteResult) {
-        console.log("voteResult");
+if (voteResult) {
+    console.log("voteResult");
 
-        document.querySelector("#logout").addEventListener("click", e => {
-            e.preventDefault();
-            fetch('http://localhost:5000/logout', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-            }).then((response) => {
-                if (response.ok) { return response.json() }
-                return Promise.reject(response);
-            })
-            .then(() => { 
-                window.location.replace("http://localhost:5000/"); 
+    document.querySelector("#logout").addEventListener("click", e => {
+        e.preventDefault();
+        fetch('http://localhost:5000/logout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+        }).then((response) => {
+            if (response.ok) { return response.json() }
+            return Promise.reject(response);
+        })
+            .then(() => {
+                window.location.replace("http://localhost:5000/");
             })
             .catch(err => {
                 err.json()
-                .then(data => { setFormMessage(voting, "error", data.message) });
+                    .then(data => { setFormMessage(voting, "error", data.message) });
             });
-        });
-    }
-
-
-
-    document.querySelectorAll(".form__input").forEach(inputElement => {
-        inputElement.addEventListener("blur", e => {
-        });
-
-        inputElement.addEventListener("input", e => {
-            clearInputError(inputElement);
-        });
     });
+}
+
+
+
+document.querySelectorAll(".form__input").forEach(inputElement => {
+    inputElement.addEventListener("blur", e => {
+    });
+
+    inputElement.addEventListener("input", e => {
+        clearInputError(inputElement);
+    });
+});
 });
