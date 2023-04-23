@@ -1,24 +1,19 @@
-import sqlite3
-from database import *
+from blockchain import *
 
-# Check vote is completed or not
-def isVoteCompleted(vote_id):
-    conn = get_db_connection()
-    vote = conn.execute('SELECT * FROM votes WHERE vote_id = ?', (vote_id)).fetchone()
-    vote_dict = row_to_dict(vote)
+# Check duplicate vote in blockchain
+def isDuplicateVote(blockchain, pk, hs):
+    block_index = 1
 
-    if vote_dict['vote_isComplete']:
-        conn.close()
-        return True
+    while block_index < len(blockchain.chain):
+      block = blockchain.chain[block_index]
+      trip = block['data']
+      data = trip[0]
+      
+      if data['prover key'] == pk & data['hashed secret'] == hs:
+          return True
+      else:
+          continue
 
-    voted = vote_dict['op1_ct'] + vote_dict['op2_ct'] + 1
-    if voted >= vote_dict['vote_participants_ct']:
-        conn.execute('UPDATE votes SET vote_isComplete = TRUE WHERE vote_id = ?', (vote_id,))
-        conn.commit()
-        conn.close()
- 
-    return False
-
-# TODO: Check duplicate vote in blockchain
-def isDuplicateVote(user_id, vote_id):
+    block_index += 1
+    
     return False
