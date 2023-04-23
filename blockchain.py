@@ -117,7 +117,7 @@ class Blockchain(object):
       trip = block['data']
       data = trip[0]
       
-      if data['vote'] == True:
+      if data['vote'] == "A":
         a +=1
       else:
         b += 1

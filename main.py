@@ -241,22 +241,26 @@ def vote():
 
     #fetch prover key and hashed secret
     pk = int(request.cookies.get('saved_c'))
-    hs = request.cookies.get('saved_y')
 
-    #TODO where do we actually check the verifier? Here? How?
+    conn = get_db_connection()
+    y = conn.execute('SELECT saved_y FROM users WHERE invitation_code = ?', (invitation_code,)).fetchone()
+    conn.commit()
+    conn.close()
+    hs = int(row_to_dict(y)['saved_y'])
+
 
     #check duplicate vote, return error if duplicate
     if (isDuplicateVote(blockchain, pk, hs)):
         return make_response({'message':'User already voted!'}, 400)
     
-    #TODO get vote from the data
+    #get vote from the data
     data = request.get_json()
     candidate = data['candidate']
 
     if candidate=="op1":
-        v = True
+        v = "A"
     else:
-        v = False
+        v = "B"
 
     blockchain.mineblock(pk, hs, v)
     blockchain.printchain()
@@ -266,11 +270,7 @@ def vote():
         return make_response({'message':'Chain is not valid!'}, 400)
     
     #update vote count
-    #TODO do we actually display this anywhere? need to access this in vote.py?
     temp = blockchain.countvotes()
-    op1_ct = temp[0]
-    op2_ct = temp[1]
-
 
 #    data = request.get_json()
 #    candidate = data['candidate']
@@ -288,5 +288,5 @@ def vote():
 #    conn.commit()        
 #    conn.close()
 
-    response = make_response({'message':'Success'}, 200)
+    response = make_response({'message':'Success', 'op1_ct':temp[0], 'op2_ct':temp[1]}, 200)
     return response
