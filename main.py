@@ -10,11 +10,15 @@ import zkp_verifier as ve
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
-init_db() # Initializing Database
+#init_db() # Initializing Database
 
 
-#TODO store, save, and recover blockchain from previous sessions
+#TODO recover blockchain from previous sessions
 blockchain = Blockchain()
+blockchain.printchain()
+blockchain.restart_chain()
+blockchain.printchain()
+print("Blockchain restarted")
 
 
 '''
