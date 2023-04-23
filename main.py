@@ -272,21 +272,11 @@ def vote():
     #update vote count
     temp = blockchain.countvotes()
 
-#    data = request.get_json()
-#    candidate = data['candidate']
-
-#    conn = get_db_connection()
-#    user = conn.execute('SELECT * FROM votes_participants WHERE participant = ?', (invitation_code,)).fetchone()
-#    if user is not None:
-#        print('User already voted!')
-#        return make_response({'message':'User already voted!'}, 400)
-    
-#    vote_ct = conn.execute('SELECT ' + candidate + '_ct FROM votes WHERE vote_id = ?', (1,)).fetchone()
-#    vote_ct = int(row_to_dict(vote_ct)[candidate + '_ct']) + 1
-#    conn.execute('UPDATE votes SET ' + candidate + '_ct' + ' = ? WHERE vote_id = ?', (vote_ct, 1))
+    conn = get_db_connection()
+    conn.execute('UPDATE votes SET op1_ct = ?, op2_ct = ? WHERE vote_id = ?', (temp[0], temp[1], 1))
 #    conn.execute('INSERT INTO votes_participants (participant,vote_id) VALUES (?,?)',(invitation_code,1))
-#    conn.commit()        
-#    conn.close()
+    conn.commit()        
+    conn.close()
 
-    response = make_response({'message':'Success', 'op1_ct':temp[0], 'op2_ct':temp[1]}, 200)
+    response = make_response({'message':'Success'}, 200)
     return response
