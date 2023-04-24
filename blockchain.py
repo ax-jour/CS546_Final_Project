@@ -53,7 +53,6 @@ class Blockchain(object):
     data0 = str(dat['prover key'])
     data1 = str(dat['hashed secret'])
     data2 = str(dat['vote'])
-    print(block['index'])
     conn = database.get_db_connection()
     conn.execute("INSERT INTO blockchain (idx, ts, proof, previous_hash, data_pk, data_hs, data_vote) VALUES (?, ?, ?, ?, ?, ?, ?)", \
                  (block['index'], block['timestamp'], block['proof'], block['previous_hash'], data0, data1, data2))

@@ -249,11 +249,12 @@ def vote():
     conn.close()
     hs = int(row_to_dict(y)['saved_y'])
 
-
     #check duplicate vote, return error if duplicate
-    if (isDuplicateVote(blockchain, pk, hs)):
+    dupvote = isDuplicateVote(blockchain, pk, hs)
+    print(dupvote)
+    if (dupvote == True):
         return make_response({'message':'User already voted!'}, 400)
-    
+
     #get vote from the data
     data = request.get_json()
     candidate = data['candidate']
