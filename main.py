@@ -10,11 +10,12 @@ import zkp_verifier as ve
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
-init_db() # Initializing Database
+#init_db() # Initializing Database
 
 
-#TODO store, save, and recover blockchain from previous sessions
+#TODO recover blockchain from previous sessions
 blockchain = Blockchain()
+blockchain.restart_chain()
 
 
 '''
@@ -248,11 +249,11 @@ def vote():
     conn.close()
     hs = int(row_to_dict(y)['saved_y'])
 
-
     #check duplicate vote, return error if duplicate
-    if (isDuplicateVote(blockchain, pk, hs)):
+    dupvote = isDuplicateVote(blockchain, pk, hs)
+    if (dupvote == True):
         return make_response({'message':'User already voted!'}, 400)
-    
+
     #get vote from the data
     data = request.get_json()
     candidate = data['candidate']

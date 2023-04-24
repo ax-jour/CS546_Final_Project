@@ -17,6 +17,8 @@ def init_db():
         conn.executescript(f.read())
     with open('./sql_scripts/votes.sql') as f:
         conn.executescript(f.read())
+    with open('./sql_scripts/blockchain.sql') as f:
+        conn.executescript(f.read())
 
     conn.commit()
     conn.close()
