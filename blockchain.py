@@ -8,31 +8,28 @@ class Blockchain(object):
   def __init__(self):
     self.data = []
     self.chain = []
-    self.create_blockfirst(previous_hash='Head: Ignore', proof=1)
+    self.create_blockfirst(previous_hash='1', proof=1)
   
 
   def create_blockfirst(self, proof, previous_hash=None):
-    print("created first block")
     block = {'index': len(self.chain)+1,
              'timestamp': str(datetime.datetime.now()),
              'proof': proof,
              'previous_hash': previous_hash or self.hash(self.chain[-1]),
-             'data': self.data
+             'data': [0, 0, "Head: Ignore"]
              }
     
-    data0 = "None"
-    data1 = "None"
-    data2 = "None"
+    data0 = 0
+    data1 = 0
+    data2 = "Head: Ignore"
 
     conn = database.get_db_connection()
-    result = conn.execute("SELECT * FROM blockchain")
-
+    result = conn.execute("SELECT * FROM blockchain").fetchall()
     bc_ls = database.row_to_dict(result)
-    print(bc_ls)
+
     
-    if(not bc_ls):
-      print("db empty, adding")
-      conn.execute("INSERT or IGNORE INTO blockchain (idx, ts, proof, previous_hash, data_pk, data_hs, data_vote) VALUES (?, ?, ?, ?, ?, ?, ?)", \
+    if(bc_ls == []):
+      conn.execute("INSERT INTO blockchain (idx, ts, proof, previous_hash, data_pk, data_hs, data_vote) VALUES (?, ?, ?, ?, ?, ?, ?)", \
                  (block['index'], block['timestamp'], block['proof'], block['previous_hash'], data0, data1, data2))
     conn.commit()
     conn.close()
@@ -40,7 +37,6 @@ class Blockchain(object):
     self.data = []    
 
     self.chain.append(block)
-    print(self.chain)
     return block
 
   #add another block to the chain and store in database
@@ -57,6 +53,7 @@ class Blockchain(object):
     data0 = str(dat['prover key'])
     data1 = str(dat['hashed secret'])
     data2 = str(dat['vote'])
+    print(block['index'])
     conn = database.get_db_connection()
     conn.execute("INSERT INTO blockchain (idx, ts, proof, previous_hash, data_pk, data_hs, data_vote) VALUES (?, ?, ?, ?, ?, ?, ?)", \
                  (block['index'], block['timestamp'], block['proof'], block['previous_hash'], data0, data1, data2))
@@ -71,25 +68,22 @@ class Blockchain(object):
 
   #add block back into chain from database when restarting
   def restart_chain(self):
-     print("in method")
      conn = database.get_db_connection()
-     blockchain_list = conn.execute("SELECT * FROM blockchain")
+     blockchain_list = conn.execute("SELECT * FROM blockchain").fetchall()
+     bc_ls = database.row_to_dict(blockchain_list)
+     # [{}, {}, {}]
      conn.commit()
      conn.close()
 
-     bc_ls = database.row_to_dict(blockchain_list)
-     # [{}, {}, {}]
-
      list = []
 
-     if (not bc_ls == None):
-      print("in if statement")
+     if (not bc_ls == []):
       for bc in bc_ls:
           indx = bc['idx']
           ts = bc['ts']
           prf = int(bc['proof'])
-          p_h = int(bc['previous_hash'])
-          self.setdata(int(bc['data0']), int(bc['data1']), bc['data2'])
+          p_h = str(bc['previous_hash'])
+          self.setdata(int(bc['data_pk']), int(bc['data_hs']), str(bc['data_vote']))
 
           block = {'index': indx,
               'timestamp': ts,

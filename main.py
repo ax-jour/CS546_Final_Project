@@ -15,10 +15,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 
 #TODO recover blockchain from previous sessions
 blockchain = Blockchain()
-blockchain.printchain()
 blockchain.restart_chain()
-blockchain.printchain()
-print("Blockchain restarted")
 
 
 '''
