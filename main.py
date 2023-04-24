@@ -251,7 +251,6 @@ def vote():
 
     #check duplicate vote, return error if duplicate
     dupvote = isDuplicateVote(blockchain, pk, hs)
-    print(dupvote)
     if (dupvote == True):
         return make_response({'message':'User already voted!'}, 400)
 
